@@ -3,8 +3,11 @@
 
 package shortestPath;
 
-import directedGraph.*;
+
+import shortestPath.directedGraph.*;
 import sim.SYSimulation;
+
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.List;
@@ -25,6 +28,8 @@ public class ShortestPath<V> {
 	Map<V,V> pred; 				// Vorgänger für jeden Knoten
 	IndexMinPQ<V,Double> cand; 	// Kandidaten als PriorityQueue PQ
 	// ...
+	DirectedGraph<V> graph;
+	Heuristic<V> heur;
 
 	/**
 	 * Konstruiert ein Objekt, das im Graph g k&uuml;rzeste Wege 
@@ -41,6 +46,10 @@ public class ShortestPath<V> {
 		pred = new HashMap<>();
 		cand = new IndexMinPQ<>();
 		// ...
+		this.graph = g;
+		this.heur = h;
+
+
 	}
 
 	/**
@@ -68,7 +77,12 @@ public class ShortestPath<V> {
 	 * @param g Zielknoten
 	 */
 	public void searchShortestPath(V s, V g) {
-		// ...
+		if(heur == null){
+			dijkstra(s,g);
+		} else {
+			astar(s,g);
+		}
+
 	}
 
 	/**
@@ -91,6 +105,35 @@ public class ShortestPath<V> {
 	public double getDistance() {
 		// ...
 		return 0.0;
+	}
+
+	private void dijkstra(V s, V g){
+		for(var v : graph.getVertexSet()){
+			dist.put(v, Double.MAX_VALUE);
+			pred.put(v, null);
+		}
+		dist.put(s,0.);
+		cand.add(s,0.);
+		while(!cand.isEmpty()){
+			double d = cand.getMinValue();
+			V v = cand.removeMin();
+			for(var w : graph.getSuccessorVertexSet(v)){
+				double newdistance = dist.get(v) + graph.getWeight(v,w);
+				if(dist.get(w) == Double.MAX_VALUE){
+					pred.put(w,v);
+					dist.put(w, newdistance);
+					cand.add(w,newdistance);
+				} else if (newdistance < dist.get(w)){
+					pred.put(w,v);
+					dist.put(w, newdistance);
+					cand.change(w, newdistance);
+				}
+			}
+		}
+	}
+
+	private void astar(V s, V g){
+
 	}
 
 }

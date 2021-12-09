@@ -132,8 +132,32 @@ public class ShortestPath<V> {
 		}
 	}
 
-	private void astar(V s, V g){
+	private boolean astar(V s, V g){
+		for(var v : graph.getVertexSet()){
+			dist.put(v, Double.MAX_VALUE);
+			pred.put(v, null);
+		}
+		dist.put(s,0.);
+		cand.add(s,0. + heur.estimatedCost(s,g));
 
+		while(!cand.isEmpty()){
+			double d = cand.getMinValue();
+			V v = cand.removeMin();
+			if(s == g) return true;
+			for(var w : graph.getSuccessorVertexSet(v)){
+				double newdistance = dist.get(v) + graph.getWeight(v,w);
+				if(dist.get(w) == Double.MAX_VALUE){
+					pred.put(w,v);
+					dist.put(w, newdistance);
+					cand.add(w,newdistance + heur.estimatedCost(s,g));
+				} else if (newdistance < dist.get(w)) {
+					pred.put(w,v);
+					dist.put(w, newdistance);
+					cand.change(w, newdistance + heur.estimatedCost(s,g));
+				}
+			}
+		}
+		return false;
 	}
 
 }

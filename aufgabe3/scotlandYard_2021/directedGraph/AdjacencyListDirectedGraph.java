@@ -3,10 +3,7 @@
 
 package shortestPath.directedGraph;
 
-import java.util.Collections;
-import java.util.Map;
-import java.util.TreeMap;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementierung von DirectedGraph mit einer doppelten TreeMap 
@@ -29,46 +26,74 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
     private final Map<V, Map<V, Double>> pred = new TreeMap<>(); 
 
     private int numberEdge = 0;
+	private int numberVertexes = 0;
+
 
 	@Override
 	public boolean addVertex(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+		if ( containsVertex(v) ) {
+			return false;
+		}
+
+		succ.put(v, new TreeMap<V, Double>());
+		pred.put(v, new TreeMap<V, Double>());
+		numberVertexes++;
+		return true;
     }
 
     @Override
     public boolean addEdge(V v, V w, double weight) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+		if (containsEdge(v,w)) {
+			succ.get(v).replace(w, weight);
+			return false;
+		}
+
+		addVertex(v);
+		addVertex(w);
+
+		succ.get(v).put(w, weight);
+		pred.get(w).put(v, weight);
+		numberEdge++;
+		return true;
     }
 
     @Override
     public boolean addEdge(V v, V w) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return addEdge(v, w, 1);
+
     }
 
     @Override
     public boolean containsVertex(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return succ.containsKey(v);
     }
 
     @Override
     public boolean containsEdge(V v, V w) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		if (succ.containsKey(v)) {
+			if (succ.get(v).containsKey(w)) {
+				return true;
+			}
+		}
+		return false;
     }
 
     @Override
     public double getWeight(V v, V w) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return succ.get(v).get(w);
     }
 
 	
     @Override
     public int getInDegree(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return pred.get(v).size();
     }
 
     @Override
     public int getOutDegree(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return succ.get(v).size();
     }
 	
 	@Override
@@ -78,34 +103,81 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
 
     @Override
     public Set<V> getPredecessorVertexSet(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return Collections.unmodifiableSet(pred.get(v).keySet());
     }
 
     @Override
     public Set<V> getSuccessorVertexSet(V v) {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return Collections.unmodifiableSet(succ.get(v).keySet());
     }
 
     @Override
     public int getNumberOfVertexes() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return numberVertexes;
     }
 
     @Override
     public int getNumberOfEdges() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return numberEdge;
     }
 	
 	@Override
     public 
 	DirectedGraph<V> invert() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		DirectedGraph<V> invertedGraph = new AdjacencyListDirectedGraph<V>();
+
+		Set<Map.Entry<V, Map<V, Double>>> setKnoten = succ.entrySet();
+
+		for (var entry : setKnoten) {
+
+			//falls Knoten keine Successors hat dann continue
+			if (entry.getValue().isEmpty()) {
+				continue;
+			}
+
+			for (var kante : entry.getValue().entrySet()) {
+				V oldV = entry.getKey();
+				V oldW = kante.getKey();
+				double oldWeight = kante.getValue();
+				invertedGraph.addEdge(oldW, oldV, oldWeight);
+			}
+		}
+		return invertedGraph;
 	}
 
-	
+	/*
+		gibt alle Kanten des Graphen aus in der folgenden Darstellung:
+		// 1 --> 2 weight = 1.0
+		// 2 --> 5 weight = 1.0
+		// 2 --> 6 weight = 1.0
+		// 3 --> 7 weight = 1.0
+		// ...
+	 */
 	@Override
 	public String toString() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		StringBuilder sb = new StringBuilder();
+
+		Set<Map.Entry<V, Map<V, Double>>> setKnoten = succ.entrySet();
+
+		//geht seit Java 10 auch mit "var entry : ...". Bedeutet genau das gleiche wie die auskommentierte Zeile davor.
+//		for (Map.Entry<V, Map<V, Double>> entry : setKnoten) {
+		for (var entry : setKnoten) {
+
+			//falls Knoten keine Successors hat dann continue
+			if (entry.getValue().isEmpty()) {
+				continue;
+			}
+
+			//geht seit Java 10 auch mit "var entry : ...". Bedeutet genau das gleiche wie die auskommentierte Zeile davor.
+//			for (Map.Entry<V, Double> kante : entry.getValue().entrySet())
+			for (var kante : entry.getValue().entrySet())
+
+				sb.append(entry.getKey().toString()+" => ")
+						.append(kante.getKey().toString() + " weight = " + kante.getValue() + "\n");
+		}
+
+		return sb.toString();
+
 	}
 	
 	
@@ -124,7 +196,10 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
 		System.out.println(g.getNumberOfVertexes());	// 7
 		System.out.println(g.getNumberOfEdges());		// 8
 		System.out.println(g.getVertexSet());	// 1, 2, ..., 7
-		System.out.println(g);
+
+        System.out.println();
+        System.out.println("g: ");
+        System.out.println(g);
 			// 1 --> 2 weight = 1.0 
 			// 2 --> 5 weight = 1.0
 			// 2 --> 6 weight = 1.0
@@ -145,7 +220,8 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
 		System.out.println(g.getWeight(1,2));	// 5.0	
 		
 		System.out.println("");
-		System.out.println(g.invert());
+        System.out.println("g inverted: ");
+        System.out.println(g.invert());
 			// 1 --> 5 weight = 1.0
 			// 2 --> 1 weight = 5.0
 			// 3 --> 4 weight = 1.0 
@@ -153,7 +229,19 @@ public class AdjacencyListDirectedGraph<V> implements DirectedGraph<V> {
 			// ...
 			
 		Set<Integer> s = g.getSuccessorVertexSet(2);
+        System.out.println("s: ");
 		System.out.println(s);
-		s.remove(5);	// Laufzeitfehler! Warum?
+//		s.remove(5);	// Laufzeitfehler! Warum?
+
+        /*
+         * Antwort:
+         *
+         * da s = g.getSuccessorVertexSet(2)
+         * und getSuccessorVertexSet hat als Rückgabewert
+         * "...eine nicht modifizierbare Sicht (unmodifiable view) auf die Menge aller Nachfolgerknoten..."
+         * Ist also vermutlich irgendwas als final gesetzt -> immutabler Datentyp
+         *
+         */
 	}
+
 }

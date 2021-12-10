@@ -50,6 +50,7 @@ public class ShortestPath<V> {
 		this.heur = h;
 
 
+
 	}
 
 	/**
@@ -92,8 +93,19 @@ public class ShortestPath<V> {
 	 * @return kürzester Weg als Liste von Knoten.
 	 */
 	public List<V> getShortestPath() {
-		// ...
-		return null;
+		List<V> shortestPath = new ArrayList<>();
+		V aktuell = endNode;
+
+		boolean weitermachen = true;
+		while (weitermachen) {
+			if (aktuell == startNode) {
+				weitermachen = false;
+			}
+			shortestPath.add(aktuell);
+			aktuell = pred.get(aktuell);
+		}
+		Collections.reverse(shortestPath);
+		return shortestPath;
 	}
 
 	/**
@@ -103,7 +115,7 @@ public class ShortestPath<V> {
 	 * @return Länge eines kürzesten Weges.
 	 */
 	public double getDistance() {
-		// ...
+		dist.get()
 		return 0.0;
 	}
 

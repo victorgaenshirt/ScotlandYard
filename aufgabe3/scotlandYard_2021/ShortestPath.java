@@ -2,15 +2,12 @@
 // 01.04.2021
 
 package shortestPath;
-
+//package scotlandYard_2021;
 
 import shortestPath.directedGraph.*;
-import sim.SYSimulation;
+//import SYSimulation.SYSimulation.sim.*;
 
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 // ...
 
@@ -22,7 +19,7 @@ import java.util.List;
  */
 public class ShortestPath<V> {
 	
-	SYSimulation sim = null;
+	//SYSimulation sim = null;
 	
 	Map<V,Double> dist; 		// Distanz für jeden Knoten
 	Map<V,V> pred; 				// Vorgänger für jeden Knoten
@@ -30,9 +27,11 @@ public class ShortestPath<V> {
 	// ...
 	DirectedGraph<V> graph;
 	Heuristic<V> heur;
+	V startNode;
+	V endNode;
 
 	/**
-	 * Konstruiert ein Objekt, das im Graph g k&uuml;rzeste Wege 
+	 * Konstruiert ein Objekt, das im Graph g kürzeste Wege
 	 * nach dem A*-Verfahren berechnen kann.
 	 * Die Heuristik h schätzt die Kosten zwischen zwei Knoten ab.
 	 * Wird h = null gewählt, dann ist das Verfahren identisch 
@@ -65,9 +64,9 @@ public class ShortestPath<V> {
 	 * </pre></blockquote>
 	 * @param sim SYSimulation-Objekt.
 	 */
-	public void setSimulator(SYSimulation sim) {
-		this.sim = sim;
-	}
+//	public void setSimulator(SYSimulation sim) {
+//		this.sim = sim;
+//	}
 
 	/**
 	 * Sucht den kürzesten Weg von Starknoten s zum Zielknoten g.
@@ -78,6 +77,10 @@ public class ShortestPath<V> {
 	 * @param g Zielknoten
 	 */
 	public void searchShortestPath(V s, V g) {
+
+		startNode = s;
+		endNode = g;
+
 		if(heur == null){
 			dijkstra(s,g);
 		} else {
@@ -115,8 +118,8 @@ public class ShortestPath<V> {
 	 * @return Länge eines kürzesten Weges.
 	 */
 	public double getDistance() {
-		dist.get()
-		return 0.0;
+		double distance = dist.get(endNode);
+		return distance;
 	}
 
 	private void dijkstra(V s, V g){

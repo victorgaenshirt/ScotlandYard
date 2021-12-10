@@ -77,7 +77,7 @@ public class ScotlandYard {
 	public static void main(String[] args) throws FileNotFoundException {
 
 		DirectedGraph<Integer> syGraph = getGraph();
-		
+
 		Heuristic<Integer> syHeuristic = null; // Dijkstra
 		//Heuristic<Integer> syHeuristic = getHeuristic(); // A*
 
@@ -105,7 +105,7 @@ public class ScotlandYard {
 
 		//sySp.searchShortestPath(65,157); // 9.0
 		//sySp.searchShortestPath(1,175); //25.0
-		
+
 		sySp.searchShortestPath(1,173); //22.0
 		// bei Heuristik-Faktor von 1/10 wird nicht der optimale Pfad produziert.
 		// bei 1/30 funktioniert es.

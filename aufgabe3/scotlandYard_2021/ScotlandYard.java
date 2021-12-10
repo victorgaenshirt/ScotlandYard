@@ -4,7 +4,7 @@ import shortestPath.directedGraph.*;
 import java.io.FileNotFoundException;
 
 import shortestPath.directedGraph.DirectedGraph;
-//import sim.SYSimulation;
+import SYSimulation.SYSimulation.sim.SYSimulation;
 import java.awt.Color;
 import java.io.IOException;
 
@@ -40,7 +40,19 @@ public class ScotlandYard {
 		Scanner in = new Scanner(new File("ScotlandYard_Kanten.txt"));
 
 		// ...
-		
+
+		while (in.hasNext()) {
+
+			String line  = in.nextLine();
+			String[] parts = line.split(" ");
+
+			int erster = Integer.parseInt(parts[0]);
+			int zweiter = Integer.parseInt(parts[1]);
+
+			sy_graph.addEdge(erster, zweiter);
+
+		}
+
 		// Test, ob alle Kanten eingelesen wurden: 
 		System.out.println("Number of Vertices:       " + sy_graph.getNumberOfVertexes());	// 199
 		System.out.println("Number of directed Edges: " + sy_graph.getNumberOfEdges());	  	// 862
@@ -66,68 +78,68 @@ public class ScotlandYard {
 	 * @return Heuristik für Scotland-Yard.
 	 * @throws FileNotFoundException
 	 */
-//	public static Heuristic<Integer> getHeuristic() throws FileNotFoundException {
-//		return new ScotlandYardHeuristic();
-//	}
+	public static Heuristic<Integer> getHeuristic() throws FileNotFoundException {
+		return new ScotlandYardHeuristic();
+	}
 
-//	/**
-//	 * Scotland-Yard Anwendung.
-//	 * @param args wird nicht verewendet.
-//	 * @throws FileNotFoundException
-//	 */
-//	public static void main(String[] args) throws FileNotFoundException {
-//
-//		DirectedGraph<Integer> syGraph = getGraph();
-//
-//		Heuristic<Integer> syHeuristic = null; // Dijkstra
-//		//Heuristic<Integer> syHeuristic = getHeuristic(); // A*
-//
-//		ShortestPath<Integer> sySp = new ShortestPath<Integer>(syGraph,syHeuristic);
-//
-//		sySp.searchShortestPath(65,157);
-//		System.out.println("Distance = " + sySp.getDistance()); // 9.0
-//
-//		sySp.searchShortestPath(1,175);
-//		System.out.println("Distance = " + sySp.getDistance()); // 25.0
-//
-//		sySp.searchShortestPath(1,173);
-//		System.out.println("Distance = " + sySp.getDistance()); // 22.0
-//
-//
-//		SYSimulation sim;
-//		try {
-//			sim = new SYSimulation();
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//			return;
-//		}
-//		sySp.setSimulator(sim);
-//		sim.startSequence("Shortest path from 1 to 173");
-//
-//		//sySp.searchShortestPath(65,157); // 9.0
-//		//sySp.searchShortestPath(1,175); //25.0
-//
-//		sySp.searchShortestPath(1,173); //22.0
-//		// bei Heuristik-Faktor von 1/10 wird nicht der optimale Pfad produziert.
-//		// bei 1/30 funktioniert es.
-//
-//		System.out.println("Distance = " + sySp.getDistance());
-//		List<Integer> sp = sySp.getShortestPath();
-//
-//		int a = -1;
-//		for (int b : sp) {
-//			if (a != -1)
-//			sim.drive(a, b, Color.RED.darker());
-//			sim.visitStation(b);
-//			a = b;
-//		}
-//
-//        sim.stopSequence();
-//
-//
-//    }
-//
-//}
+	/**
+	 * Scotland-Yard Anwendung.
+	 * @param args wird nicht verewendet.
+	 * @throws FileNotFoundException
+	 */
+	public static void main(String[] args) throws FileNotFoundException {
+
+		DirectedGraph<Integer> syGraph = getGraph();
+
+		Heuristic<Integer> syHeuristic = null; // Dijkstra
+		//Heuristic<Integer> syHeuristic = getHeuristic(); // A*
+
+		ShortestPath<Integer> sySp = new ShortestPath<Integer>(syGraph,syHeuristic);
+
+		sySp.searchShortestPath(65,157);
+		System.out.println("Distance = " + sySp.getDistance()); // 9.0
+
+		sySp.searchShortestPath(1,175);
+		System.out.println("Distance = " + sySp.getDistance()); // 25.0
+
+		sySp.searchShortestPath(1,173);
+		System.out.println("Distance = " + sySp.getDistance()); // 22.0
+
+
+		SYSimulation sim;
+		try {
+			sim = new SYSimulation();
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		sySp.setSimulator(sim);
+		sim.startSequence("Shortest path from 1 to 173");
+
+		//sySp.searchShortestPath(65,157); // 9.0
+		//sySp.searchShortestPath(1,175); //25.0
+
+		sySp.searchShortestPath(1,173); //22.0
+		// bei Heuristik-Faktor von 1/10 wird nicht der optimale Pfad produziert.
+		// bei 1/30 funktioniert es.
+
+		System.out.println("Distance = " + sySp.getDistance());
+		List<Integer> sp = sySp.getShortestPath();
+
+		int a = -1;
+		for (int b : sp) {
+			if (a != -1)
+			sim.drive(a, b, Color.RED.darker());
+			sim.visitStation(b);
+			a = b;
+		}
+
+        sim.stopSequence();
+
+
+    }
+
+}
 
 class ScotlandYardHeuristic implements Heuristic<Integer> {
 	private Map<Integer,Point> coord; // Ordnet jedem Knoten seine Koordinaten zu
